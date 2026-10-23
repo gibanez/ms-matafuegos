@@ -17,34 +17,50 @@ final class Inquiry
     /** @var string */
     private $email;
 
+    /** @var string|null */
+    private $phone;
+
     /** @var string */
     private $message;
 
     /** @var string */
     private $createdAt;
 
-    private function __construct(string $id, string $name, string $email, string $message, string $createdAt)
-    {
+    private function __construct(
+        string $id,
+        string $name,
+        string $email,
+        ?string $phone,
+        string $message,
+        string $createdAt
+    ) {
         $this->id = $id;
         $this->name = $name;
         $this->email = $email;
+        $this->phone = $phone;
         $this->message = $message;
         $this->createdAt = $createdAt;
     }
 
-    public static function create(string $name, string $email, string $message, string $createdAt): self
-    {
-        return new self(Uuid::uuid4()->toString(), $name, $email, $message, $createdAt);
+    public static function create(
+        string $name,
+        string $email,
+        string $phone,
+        string $message,
+        string $createdAt
+    ): self {
+        return new self(Uuid::uuid4()->toString(), $name, $email, $phone, $message, $createdAt);
     }
 
     public static function fromPersistence(
         string $id,
         string $name,
         string $email,
+        ?string $phone,
         string $message,
         string $createdAt
     ): self {
-        return new self($id, $name, $email, $message, $createdAt);
+        return new self($id, $name, $email, $phone, $message, $createdAt);
     }
 
     public function id(): string
@@ -62,6 +78,11 @@ final class Inquiry
         return $this->email;
     }
 
+    public function phone(): ?string
+    {
+        return $this->phone;
+    }
+
     public function message(): string
     {
         return $this->message;
@@ -73,7 +94,7 @@ final class Inquiry
     }
 
     /**
-     * @return array<string, string>
+     * @return array<string, string|null>
      */
     public function toArray(): array
     {
@@ -81,6 +102,7 @@ final class Inquiry
             'id' => $this->id,
             'name' => $this->name,
             'email' => $this->email,
+            'phone' => $this->phone,
             'message' => $this->message,
             'createdAt' => $this->createdAt,
         ];

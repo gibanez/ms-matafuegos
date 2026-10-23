@@ -1,0 +1,38 @@
+<?php
+
+declare(strict_types=1);
+
+namespace Gaby\Apps\Api\Provider\Application\CreateProvider;
+
+use Gaby\Apps\Api\Provider\Domain\Provider;
+use Gaby\Apps\Api\Provider\Domain\ProviderRepositoryInterface;
+
+final class CreateProviderHandler
+{
+    /** @var ProviderRepositoryInterface */
+    private $providers;
+
+    public function __construct(ProviderRepositoryInterface $providers)
+    {
+        $this->providers = $providers;
+    }
+
+    public function handle(CreateProviderCommand $command): Provider
+    {
+        $provider = Provider::create(
+            $command->name,
+            $command->taxId,
+            $command->contactName,
+            $command->email,
+            $command->phone,
+            $command->address,
+            $command->notes,
+            $command->status,
+            date('c')
+        );
+
+        $this->providers->save($provider);
+
+        return $provider;
+    }
+}

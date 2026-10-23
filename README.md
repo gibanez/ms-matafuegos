@@ -51,7 +51,7 @@ Luego abrí:
 | `http://localhost:9980/` | Home (contenido desde el CMS) |
 | `http://localhost:9980/about` | About us |
 | `http://localhost:9980/contact` | Contacto (guarda en `inquiries`) |
-| `http://localhost:9980/admin/` | CMS — `admin@example.com` / `admin1234` |
+| `http://localhost:9980/admin/` | CMS — `admin@msmatafuegos.com` / `Admin1234` |
 | `http://localhost:9980/api/ping` | Health check |
 
 ### Rutas de la API

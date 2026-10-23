@@ -1,0 +1,22 @@
+{
+  "name": "ms-matafuegos-admin",
+  "private": true,
+  "version": "1.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "@primeuix/themes": "^1.2.5",
+    "jspdf": "^4.2.1",
+    "primeicons": "7.0.0",
+    "primevue": "4.5.5",
+    "vue": "^3.5.44"
+  },
+  "devDependencies": {
+    "@vitejs/plugin-vue": "^6.0.10",
+    "vite": "^8.3.5"
+  }
+}

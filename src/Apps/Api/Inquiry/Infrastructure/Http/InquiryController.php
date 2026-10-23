@@ -34,17 +34,30 @@ final class InquiryController
         $data = (array) $request->getParsedBody();
         $name = isset($data['name']) ? trim((string) $data['name']) : '';
         $email = isset($data['email']) ? trim((string) $data['email']) : '';
+        $phone = isset($data['phone']) ? trim((string) $data['phone']) : '';
         $message = isset($data['message']) ? trim((string) $data['message']) : '';
 
-        if ($name === '' || $email === '' || $message === '') {
-            return $this->json($response, ['error' => 'Name, email and message are required.'], 422);
+        if ($name === '' || $email === '' || $phone === '' || $message === '') {
+            return $this->json(
+                $response,
+                ['error' => 'Name, email, WhatsApp number and message are required.'],
+                422
+            );
         }
 
         if (filter_var($email, FILTER_VALIDATE_EMAIL) === false) {
             return $this->json($response, ['error' => 'Invalid email address.'], 422);
         }
 
-        $inquiry = $this->createInquiry->handle(new CreateInquiryCommand($name, $email, $message));
+        $phoneDigits = preg_replace('/\D+/', '', $phone);
+
+        if ($phoneDigits === null || strlen($phoneDigits) < 8 || strlen($phoneDigits) > 15) {
+            return $this->json($response, ['error' => 'Invalid WhatsApp number.'], 422);
+        }
+
+        $inquiry = $this->createInquiry->handle(
+            new CreateInquiryCommand($name, $email, $phone, $message)
+        );
 
         return $this->json($response, $inquiry->toArray(), 201);
     }

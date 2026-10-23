@@ -22,6 +22,7 @@ final class CreateInquiryHandler
         $inquiry = Inquiry::create(
             $command->name,
             $command->email,
+            $command->phone,
             $command->message,
             date('Y-m-d H:i:s')
         );

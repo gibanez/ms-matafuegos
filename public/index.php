@@ -9,7 +9,43 @@ use Psr\Http\Message\ServerRequestInterface;
 use Slim\Exception\HttpNotFoundException;
 use Slim\Factory\AppFactory;
 
+// Desarrollo con `php -S ... -t public` (sin router): el servidor embebido manda
+// las rutas del sitio a este archivo. Servimos la SPA y el admin desde acá para
+// que no responda el 404 JSON de Slim.
+if (PHP_SAPI === 'cli-server') {
+    $requestPath = parse_url($_SERVER['REQUEST_URI'] ?? '/', PHP_URL_PATH);
+
+    if (is_string($requestPath) && preg_match('#^/api(?:/|$)#', $requestPath) !== 1) {
+        if (preg_match('#^/admin(?:/|$)#', $requestPath) === 1) {
+            $adminIndex = __DIR__ . '/admin/index.html';
+
+            if (is_file($adminIndex)) {
+                header('Content-Type: text/html; charset=utf-8');
+                readfile($adminIndex);
+
+                return;
+            }
+        }
+
+        $siteIndex = __DIR__ . '/index.html';
+
+        if (is_file($siteIndex)) {
+            header('Content-Type: text/html; charset=utf-8');
+            readfile($siteIndex);
+
+            return;
+        }
+    }
+}
+
 require __DIR__ . '/../vendor/autoload.php';
+
+// Algunos hostings compartidos entregan el header Authorization como
+// REDIRECT_HTTP_AUTHORIZATION después del rewrite. Normalizarlo para que
+// Slim lo vea como header de la request.
+if (!isset($_SERVER['HTTP_AUTHORIZATION']) && isset($_SERVER['REDIRECT_HTTP_AUTHORIZATION'])) {
+    $_SERVER['HTTP_AUTHORIZATION'] = $_SERVER['REDIRECT_HTTP_AUTHORIZATION'];
+}
 
 $timezone = Env::get('APP_TIMEZONE', 'America/Argentina/Buenos_Aires');
 date_default_timezone_set($timezone === null || $timezone === '' ? 'UTC' : $timezone);
@@ -41,6 +77,7 @@ $errorMiddleware->setDefaultErrorHandler(
 
         return $response
             ->withHeader('Content-Type', 'application/json; charset=utf-8')
+            ->withHeader('Cache-Control', 'no-store, no-cache, must-revalidate, max-age=0')
             ->withStatus($status);
     }
 );

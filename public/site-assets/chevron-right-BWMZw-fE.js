@@ -1,0 +1,1 @@
+import{f as e}from"./index-DLPw0M4-.js";var t=e({name:`chevron-right`,size:24,node:[[`path`,{d:`m9 18 6-6-6-6`,key:`mthhwq`}]]});export{t};

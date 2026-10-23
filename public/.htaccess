@@ -1,12 +1,33 @@
 DirectoryIndex index.html index.php
 
+# El hosting cachea los estaticos 30 dias. El index.html del sitio y del panel
+# NO se puede cachear: despues de cada build apunta a assets con otro hash y el
+# navegador se queda con una version vieja (pagina sin datos o en blanco).
+<IfModule mod_headers.c>
+    <FilesMatch "\.html$">
+        Header set Cache-Control "no-cache, no-store, must-revalidate, max-age=0"
+        Header unset Expires
+        Header set Pragma "no-cache"
+    </FilesMatch>
+</IfModule>
+
 RewriteEngine On
+
+# Hosting compartido (CGI/FastCGI): pasar el header Authorization a PHP.
+# Sin esto, el login funciona pero las rutas protegidas responden
+# "Missing bearer token." porque Apache no entrega el header.
+RewriteCond %{HTTP:Authorization} .
+RewriteRule .* - [E=HTTP_AUTHORIZATION:%{HTTP:Authorization}]
 
 # Admin: SPA/estático — cualquier ruta cliente que no sea un archivo real cae al index.html del panel.
 RewriteCond %{REQUEST_FILENAME} !-f
 RewriteRule ^admin/ admin/index.html [L]
 
-# Todo lo que no sea archivo ni directorio real (ej. /api/*) cae al entry point de Slim.
+# API: todo lo que cuelgue de /api lo resuelve Slim.
+RewriteCond %{REQUEST_URI} ^/api(/|$)
+RewriteRule ^ index.php [QSA,L]
+
+# Sitio público: SPA con Vue. Las rutas del cliente caen a index.html.
 RewriteCond %{REQUEST_FILENAME} !-f
 RewriteCond %{REQUEST_FILENAME} !-d
-RewriteRule ^ index.php [QSA,L]
+RewriteRule ^ index.html [L]

@@ -1,0 +1,19 @@
+<?php
+
+declare(strict_types=1);
+
+namespace Gaby\Apps\Api\Product\Application\ListProducts;
+
+final class ListProductsQuery
+{
+    /** @var array<string, mixed> */
+    public $filters;
+
+    /**
+     * @param array<string, mixed> $filters
+     */
+    public function __construct(array $filters = [])
+    {
+        $this->filters = $filters;
+    }
+}

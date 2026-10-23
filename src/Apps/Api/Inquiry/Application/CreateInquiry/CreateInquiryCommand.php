@@ -13,12 +13,16 @@ final class CreateInquiryCommand
     public $email;
 
     /** @var string */
+    public $phone;
+
+    /** @var string */
     public $message;
 
-    public function __construct(string $name, string $email, string $message)
+    public function __construct(string $name, string $email, string $phone, string $message)
     {
         $this->name = $name;
         $this->email = $email;
+        $this->phone = $phone;
         $this->message = $message;
     }
 }
